@@ -7,6 +7,7 @@ from os import system
 import emoji
 from cryptography.fernet import Fernet
 import os
+import requests
 
 key = b'rseBSHbX506ZyOLs9qJVCZvTdQqlmkrVnBT0PKXszyo='
 cipher = Fernet(key)
@@ -26,14 +27,13 @@ print("""
 ░ ░▒  ░ ░  ░ ▒ ▒░ ░ ░▒  ░ ░░░▒░ ░ ░   ░   ░   ░▒ ░ ▒░  ▒   ▒▒ ░░  ░      ░
 ░  ░  ░  ░ ░ ░ ▒  ░  ░  ░   ░░░ ░ ░ ░ ░   ░   ░░   ░   ░   ▒   ░      ░   
       ░      ░ ░        ░     ░           ░    ░           ░  ░       ░   
-                                                                          """)
+    """)
 
 def is_emoji(s):
     return any(char in emoji.EMOJI_DATA for char in s)
     
 def am(text):
-    output_string = text
-    output_string = output_string.replace("а", "α") \
+    text = text.replace("а", "α") \
                              .replace("б", "δl") \
                              .replace("в", "ϐ") \
                              .replace("г", "г") \
@@ -66,7 +66,12 @@ def am(text):
                              .replace("э", "э") \
                              .replace("ю", "ю") \
                              .replace("я", "я́")
-    return output_string
+    return text
+
+# DOWNLOADING SOSUGRAM STARS
+stars = requests.get("https://raw.githubusercontent.com/superisuer/SosuGram/refs/heads/main/stars.txt").text.split(" ")
+for i in range(len(stars)): 
+    stars[i] = int(stars[i])
 
 user_id = 0
 auto_ai = 0
@@ -135,7 +140,8 @@ def reply_to_messages(client, message):
         "s": lambda: handle_s_command(message, parts),
         "rnd": lambda: handle_rnd_command(message, parts),
         "about": lambda: handle_about_command(message, parts),
-        "auto_react": lambda: handle_autoreact_command(message, parts)
+        "auto_react": lambda: handle_autoreact_command(message, parts),
+        "me": lambda: handle_me_command(message, client),
     }
 
     command_action = command_switch.get(command)
@@ -147,6 +153,29 @@ def reply_to_messages(client, message):
                 message.edit(text=message.text + prefix)
             except:
                 pass
+
+def handle_me_command(message, client):
+    me = client.get_me()
+    second_additional_text = ""
+    if me.id in stars:
+        additional_text = "🌟"
+        second_additional_text = "Этот пользователь помог в разработке SosuGram."
+    elif me.is_premium:
+        additional_text = "⭐️"
+    elif me.is_fake or me.is_scam:
+        additional_text = "🚫"
+    elif me.is_bot:
+        additional_text = "🤖"
+    else:
+        additional_text = "👤"
+
+    me_str = f"""
+**{additional_text} {me.first_name} {me.last_name}**
+**Тег:** @{me.username}
+**ID:** {me.id}
+**{second_additional_text}**
+"""
+    message.edit(text=me_str)
 
 def handle_ai_command(message, parts):
     print(message.text)
@@ -249,6 +278,6 @@ def handle_rnd_command(message, parts):
         message.edit(text="нет")
 
 def handle_about_command(message, parts):
-    message.edit(text="**Вы используете SosuGram E.**\n**- Разработчик: @mikeapplee**\n**- Канал: @sosugram**")
+    message.edit(text="**Вы используете SosuGram E.**\n**- Разработчик: **@mikeapplee\n**- Канал: **@sosugram")
 
 app.run()
