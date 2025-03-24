@@ -5,15 +5,13 @@ import random
 import base64
 from os import system
 from cryptography.fernet import Fernet
+import os
 
 key = b'rseBSHbX506ZyOLs9qJVCZvTdQqlmkrVnBT0PKXszyo='
 cipher = Fernet(key)
 
 def clear_console():
-    if system == "Windows":
-        system('cls')
-    else:
-        system('clear')
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 clear_console()
 print("""
@@ -98,10 +96,13 @@ def reply_to_messages(client, message):
             try:
                 response = chat(model=ollama_model, messages=[{'role': 'system', 'content': system_prompt}, {'role': 'user', 'content': prompt}])['message']['content']
             except Exception as e:
-                message.reply(text="**Ошибка: **" + str(e))
+                msg.edit(text="**Ошибка: **" + str(e))
             else:
                 msg.edit(text=response)
-    if message.from_user.id != user_id:
+    try:
+        if message.from_user.id != user_id:
+            return
+    except:
         return
     print(f"[ COMMAND ] {message.text} - @{message.from_user.username}, ID: {message.from_user.id}")
     parts = message.text.split()
@@ -123,7 +124,11 @@ def reply_to_messages(client, message):
     if command_action:
         command_action()
     else:
-        message.edit(text=message.text + prefix)
+        if not prefix == "":
+            try:
+                message.edit(text=message.text + prefix)
+            except:
+                pass
 
 def handle_ai_command(message, parts):
     print(message.text)
