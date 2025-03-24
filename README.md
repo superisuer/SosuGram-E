@@ -14,12 +14,12 @@ A modification for your Telegram account that is able to manage your messages th
 - `about` - About the SosuGram.
 ## Setup
 ### Windows
-1. Download and unarchive the latest release and configure config.json (entering api_hash, api_id and other parameters is optional).
+1. [Download the latest release](https://github.com/superisuer/SosuGram-E/releases) and unarchive and configure config.json (entering api_hash, api_id and other parameters is optional).
 2. Run the SosuGram executable and enter your phone number, code and cloud password (if present).
 3. After entering the data, go to any Telegram client from the same account and try to write any command. For example, write `about` command (with the prefix that was in config.json, the default is “.”).
 4. If your message has changed, you've done the right thing. If it still hasn't changed and you are sure it is correct, send the error (or a screenshot of the SosuGram window) to [Issues](https://github.com/superisuer/SosuGram-E/issues).
 ### Python (Windows and other systems)
-1. Download the source and code from the latest release and extract it to any folder.
+1. [Download the source code](https://github.com/superisuer/SosuGram-E/releases) from the latest release and extract it to any folder.
 2. Open terminal in this directory and install requirements.txt via pip.
 3. After installation, configure config.json (same as with Windows) and run main.py.
 4. Everything else is the same as in the Windows instructions.
