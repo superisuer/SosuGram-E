@@ -1,0 +1,11 @@
+{
+    "api_hash": "",
+    "api_id": "",
+    "database_name": "sosugram",
+    "device_model": "SosuGram-E Session",
+    "ollama_model": "llama3.1:8b",
+    "system_prompt": "Use Telegram MarkdownV2 for response.",
+    "thinking_message": "**Думаю...**",
+    "prefix": "",
+    "command_prefix": "."
+}
