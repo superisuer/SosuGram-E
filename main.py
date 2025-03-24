@@ -86,13 +86,14 @@ prefix = cfg.prefix
 api_hash = cfg.api_hash
 api_id = cfg.api_id
 device_model = cfg.device_model
+database_name = cfg.database_name
 
 # START APP
 if len(api_id) < 4 and len(api_hash) < 12:
     api_id = "21865971"
     api_hash = "ad1a33e350675c34d954b9104745df97"
 
-app = Client("sosugram", api_id=api_id, api_hash=api_hash, device_model=device_model)
+app = Client(database_name, api_id=api_id, api_hash=api_hash, device_model=device_model)
 
 @app.on_message()
 def reply_to_messages(client, message):

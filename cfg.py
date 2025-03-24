@@ -20,6 +20,7 @@ command_prefix = config.get("command_prefix")
 api_hash = config.get("api_hash")
 api_id = config.get("api_hash")
 device_model = config.get("device_model")
+database_name = config.get("database_name")
 
 def save_config(data, filename="config.json"):
     with open(filename, "w", encoding="utf-8") as file:
