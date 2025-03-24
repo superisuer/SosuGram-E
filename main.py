@@ -4,6 +4,7 @@ import cfg
 import random 
 import base64
 from os import system
+import emoji
 from cryptography.fernet import Fernet
 import os
 
@@ -26,6 +27,9 @@ print("""
       ░      ░ ░        ░     ░           ░    ░           ░  ░       ░   
                                                                           """)
 
+def is_emoji(s):
+    return any(char in emoji.EMOJI_DATA for char in s)
+    
 def am(text):
     output_string = text
     output_string = output_string.replace("а", "α") \
@@ -65,6 +69,7 @@ def am(text):
 
 user_id = 0
 auto_ai = 0
+auto_react = [0, ""]
 
 # LOAD VARS FROM CONFIG
 system_prompt = cfg.system_prompt
@@ -86,8 +91,17 @@ app = Client("sosugram", api_id=api_id, api_hash=api_hash, device_model="SosuGra
 @app.on_message()
 def reply_to_messages(client, message):
     global user_id
+    if not hasattr(message, "text"):
+        return
     if user_id == 0:
         user_id = client.get_me().id
+    if auto_react[0] == message.chat.id and message.from_user.id != user_id:
+        try:
+            message.react(auto_react[1])
+        except Exception as e:
+            print(f"[ REACT ] {e} - @{message.from_user.username}, ID: {message.from_user.id}")
+        else:
+            print(f"[ REACT ] @{message.from_user.username}, ID: {message.from_user.id}")
     if auto_ai == message.chat.id and not message.text.startswith(command_prefix):
         print(f"[ AUTO-AI ] {message.text} - @{message.from_user.username}, ID: {message.from_user.id}, GROUP_ID: {auto_ai}")
         if message.from_user.id != user_id:
@@ -104,6 +118,8 @@ def reply_to_messages(client, message):
             return
     except:
         return
+    if not message.text.startswith(command_prefix):
+        return
     print(f"[ COMMAND ] {message.text} - @{message.from_user.username}, ID: {message.from_user.id}")
     parts = message.text.split()
     command = parts[0].replace(command_prefix, "")
@@ -118,6 +134,7 @@ def reply_to_messages(client, message):
         "s": lambda: handle_s_command(message, parts),
         "rnd": lambda: handle_rnd_command(message, parts),
         "about": lambda: handle_about_command(message, parts),
+        "auto_react": lambda: handle_autoreact_command(message, parts)
     }
 
     command_action = command_switch.get(command)
@@ -198,6 +215,24 @@ def handle_command_prefix_command(message, parts):
     cfg.save_cfg('command_prefix', text.encode('utf-8').decode('unicode_escape'))
     command_prefix = text.encode('utf-8').decode('unicode_escape')
     message.edit(text="**COMMAND_PREFIX: **" + text + ".")
+
+def handle_autoreact_command(message, parts):
+    global auto_react
+    if len(parts) < 2:
+        message.edit(f'Реакция удалена для авто-реакции.')
+        return
+    try:
+        chat_id = message.chat.id
+    except:
+        message.edit(f'**Ошибка: **не удалось получить chat_id.')
+        return
+    reaction = parts[1]
+    if is_emoji(reaction):
+        auto_react = [chat_id, reaction]
+    else:
+        message.edit(f'**Ошибка: **"{reaction}" не является эмодзи.')
+        return
+    message.edit(f'"{reaction}" установлен для авто-реакции для чата **{chat_id}**.')
 
 def handle_s_command(message, parts):
     message_output = ''
