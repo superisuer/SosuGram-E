@@ -23,3 +23,8 @@ A modification for your Telegram account that is able to manage your messages th
 2. Open terminal in this directory and install requirements.txt via pip.
 3. After installation, configure config.json (same as with Windows) and run main.py.
 4. Everything else is the same as in the Windows instructions.
+## Where do I host?
+You can host anywhere you can install Python and have internet.
+- Mobile (via Termux or other apps)
+- Linux (yes)
+- Windows (you can)
