@@ -3,3 +3,4 @@ tgcrypto
 cryptography
 ollama
 emoji
+requests
